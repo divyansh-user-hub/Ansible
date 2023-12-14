@@ -1,0 +1,12 @@
+---
+- name: Print facts
+  hosts: dbservers
+  tasks:
+    - name: Print OS name
+      debug:
+        var: ansible_distribution
+
+    - name: Print python version
+      debug:
+        var: ansible_python_version
+

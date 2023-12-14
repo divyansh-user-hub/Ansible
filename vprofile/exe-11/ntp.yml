@@ -1,0 +1,100 @@
+---
+- name: Setup multiple server on centos & ubuntu machine
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install multiple server on centos
+      yum:
+        name: '{{item}}'
+        state: present
+      when: ansible_distribution == "CentOS"
+      loop:
+        - zip
+        - unzip
+        - wget
+        - git
+        - httpd
+        - chrony
+
+    - name: Install multiple server on ubuntu
+      apt:
+        name: '{{item}}'
+        state: present
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - zip
+        - unzip
+        - wget
+        - git
+        - ntp
+        - apache2
+
+    - name: Start service on centos
+      service:
+        name: '{{item}}'
+        state: started
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+      loop:
+        - chronyd
+        - httpd
+
+    - name: Start service on ubuntu
+      service:
+        name: '{{item}}'
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - ntp
+        - apache2
+
+
+    - name: Banner file
+      copy:
+        content: '# This server is managed by ansible. Please no manual changes.'
+        dest: /etc/motd
+
+
+    - name: Deploy ntp agent conf on centos
+      template:
+        src: templates/ntpconf_centos
+        dest: /etc/chrony.conf
+        backup: yes
+      when: ansible_distribution == "CentOS"
+      notify:
+        - Restart service on centos
+
+
+    - name: Deploy ntp agent conf on ubuntu
+      template:
+        src: templates/ntpconf_ubuntu
+        dest: /etc/ntp.conf
+        backup: yes
+      when: ansible_distribution == "Ubuntu"
+      notify:
+        - Restart service on ubuntu
+
+  handlers:
+    - name: Restart service on centos
+      service:
+        name: '{{item}}'
+        state: started
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+      loop:
+        - chronyd
+        - httpd
+
+    - name: Restart service on ubuntu
+      service:
+        name: '{{item}}'
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - ntp
+        - apache2
+
+   

@@ -1,0 +1,8 @@
+username:
+loop:
+  - terraform
+  - ansible
+  - docker
+  - linux
+  - kubernetes
+comm: this user is from hostvars_db01

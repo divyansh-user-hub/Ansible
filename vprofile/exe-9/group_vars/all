@@ -1,0 +1,8 @@
+username:
+loop:
+  - blue
+  - green
+  - red
+  - violet
+  - grey
+comm: this user is from groupvars_all

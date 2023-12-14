@@ -1,0 +1,51 @@
+---
+- name: Provisioning Servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install ntp server on centos
+      yum:
+        name: "{{item}}"
+        state: present
+      when: ansible_distribution == "CentOS"
+      loop:
+        - chrony
+        - wget
+        - zip
+        - unzip
+        - git
+        - httpd
+
+    - name: Start service on centos
+      service:
+        name: "{{item}}"
+        state: started
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+      loop:
+        - chronyd
+        - httpd
+
+    - name: Install ntp service on ubuntu
+      apt:
+        name: "{{item}}"
+        state: present
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - ntp
+        - wget
+        - zip
+        - unzip
+        - git
+        - apache2
+
+    - name: Start Service on ubuntu
+      service:
+        name: "{{item}}"
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - ntp
+        - apache2

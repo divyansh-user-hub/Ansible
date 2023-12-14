@@ -1,0 +1,27 @@
+---
+- name: Understanding Vars
+  hosts: dbservers
+  become: yes
+    #vars:
+    #username: antra
+    #comm: this user is from playbook
+  tasks:
+    - name: Add user
+      ansible.builtin.user:
+        name: "{{item}}"
+        comment: "{{comm}}"
+      register: userdata
+      loop:
+        - antra
+        - ritika
+        - asha
+        - kush
+        - divyansh
+        - kaushal
+        - smarth
+
+    - debug:
+        var: userdata.name
+
+    - debug:
+        var: userdata.comment
