@@ -80,7 +80,7 @@
     - name: Restart service on centos
       service:
         name: '{{item}}'
-        state: started
+        state: restarted
         enabled: yes
       when: ansible_distribution == "CentOS"
       loop:
@@ -90,7 +90,7 @@
     - name: Restart service on ubuntu
       service:
         name: '{{item}}'
-        state: started
+        state: restarted
         enabled: yes
       when: ansible_distribution == "Ubuntu"
       loop:

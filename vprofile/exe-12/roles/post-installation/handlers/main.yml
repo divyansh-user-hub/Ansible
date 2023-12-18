@@ -1,0 +1,22 @@
+---
+# handlers file for post-installation
+- name: Restart service on centos
+  service:
+    name: '{{item}}'
+    state: restarted
+    enabled: yes
+  when: ansible_distribution == "CentOS"
+  loop:
+    - chronyd
+    - httpd
+
+- name: Restart service on ubuntu
+  service:
+    name: '{{item}}'
+    state: restarted
+    enabled: yes
+  when: ansible_distribution == "Ubuntu"
+  loop:
+    - ntp
+    - apache2
+

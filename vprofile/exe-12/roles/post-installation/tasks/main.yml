@@ -1,0 +1,75 @@
+---
+# tasks file for post-installation
+- name: Install multiple server on centos
+  yum:
+    name: '{{item}}'
+    state: present
+  when: ansible_distribution == "CentOS"
+  loop:
+    - zip
+    - unzip
+    - wget
+    - git
+    - httpd
+    - chrony
+
+- name: Install multiple server on ubuntu
+  apt:
+    name: '{{item}}'
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+  loop:
+    - zip
+    - unzip
+    - wget
+    - git
+    - ntp
+    - apache2
+
+- name: Start service on centos
+  service:
+    name: '{{item}}'
+    state: started
+    enabled: yes
+  when: ansible_distribution == "CentOS"
+  loop:
+    - chronyd
+    - httpd
+
+- name: Start service on ubuntu
+  service:
+    name: '{{item}}'
+    state: started
+    enabled: yes
+  when: ansible_distribution == "Ubuntu"
+  loop:
+    - ntp
+    - apache2
+
+
+- name: Banner file
+  copy:
+    content: '# This server is managed by ansible. Please no manual changes.'
+    dest: /etc/motd
+
+
+- name: Deploy ntp agent conf on centos
+  template:
+    src: ntpconf_centos.j2
+    dest: /etc/chrony.conf
+    backup: yes
+  when: ansible_distribution == "CentOS"
+  notify:
+    - Restart service on centos
+
+
+- name: Deploy ntp agent conf on ubuntu
+  template:
+    src: ntpconf_ubuntu.j2
+    dest: /etc/ntp.conf
+    backup: yes
+  when: ansible_distribution == "Ubuntu"
+  notify:
+    - Restart service on ubuntu
+
